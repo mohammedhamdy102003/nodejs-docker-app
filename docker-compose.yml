@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  node-app:
+    build: .
+    container_name: node-app
+    ports:
+      - "4000:3000"   # البورت 4000 على جهازك، و3000 جوه الكونتينر
+    volumes:
+      - ./src:/app/src
+    environment:
+      - PORT=3000
+      - NODE_ENV=development
+    command: npm start
+
+ 
