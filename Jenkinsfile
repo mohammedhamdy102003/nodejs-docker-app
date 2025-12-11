@@ -1,38 +1,36 @@
-pipeline{
+pipeline {
     agent any
-    environment{
-        DOCKER_HUB_CREDENTIALS= credentials("dockerhub-user")
-        DOCKERHUB_USER= "mohammed102003"
-        IMAGE_TAG= $(env.BUILD_NUMBER)
-
+    environment {
+        DOCKERHUB_USER = "mohammed102003"
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
     }
-    stages{
-        stage("checkout"){
-            steps{
+    stages {
+        stage("Checkout") {
+            steps {
                 git branch: "main", url: "https://github.com/mohammedhamdy102003/nodejs-docker-app"
             }
         }
-        stage("build image"){
-            steps{
-                sh "docker build -t $DOCKERHUB_USER/nodejs-docker-app:$IMAGE_TAG"
+        stage("Build Image") {
+            steps {
+                sh "docker build -t ${DOCKERHUB_USER}/nodejs-docker-app:${IMAGE_TAG} ."
             }
         }
-        stage("test"){
-            steps{
-             sh "docker run --rm ${IMAGE_NAME}:${IMAGE_TAG} node app.js"
+        stage("Test") {
+            steps {
+                sh "docker run --rm ${DOCKERHUB_USER}/nodejs-docker-app:${IMAGE_TAG} node app.js"
             }
         }
-   stage('Login to Docker Hub') {
-    steps {
-        sh "echo ${env.DOCKER_HUB_CREDENTIALS_PSW} | docker login -u ${env.DOCKER_HUB_CREDENTIALS_USR} --password-stdin"
-    }
-}
-
-        stage("push image"){
-            steps{
-            sh " docker push $DOCKERHUB_USER/nodejs-docker-app:$IMAGE_TAG "
+        stage("Login to Docker Hub") {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-user', usernameVariable: 'DOCKER_HUB_CREDENTIALS_USR', passwordVariable: 'DOCKER_HUB_CREDENTIALS_PSW')]) {
+                    sh "echo \$DOCKER_HUB_CREDENTIALS_PSW | docker login -u \$DOCKER_HUB_CREDENTIALS_USR --password-stdin"
+                }
+            }
         }
-
+        stage("Push Image") {
+            steps {
+                sh "docker push ${DOCKERHUB_USER}/nodejs-docker-app:${IMAGE_TAG}"
+            }
+        }
     }
-}
 }
