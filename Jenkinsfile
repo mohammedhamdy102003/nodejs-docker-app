@@ -15,11 +15,12 @@ pipeline {
                 sh "docker build -t ${DOCKERHUB_USER}/nodejs-docker-app:${IMAGE_TAG} ."
             }
         }
-        stage("Test") {
-            steps {
-                sh "docker run --rm ${DOCKERHUB_USER}/nodejs-docker-app:${IMAGE_TAG} node app.js"
-            }
-        }
+ stage("Test") {
+    steps {
+        sh "docker run --rm ${DOCKERHUB_USER}/nodejs-docker-app:${IMAGE_TAG}"
+    }
+}
+
         stage("Login to Docker Hub") {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-user', usernameVariable: 'DOCKER_HUB_CREDENTIALS_USR', passwordVariable: 'DOCKER_HUB_CREDENTIALS_PSW')]) {
