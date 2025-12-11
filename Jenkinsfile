@@ -22,11 +22,12 @@ pipeline{
              sh "docker run --rm ${IMAGE_NAME}:${IMAGE_TAG} node app.js"
             }
         }
-        stage("login to docker hub"){
-            steps{
-                sh "echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_USER --password-stdin"
-            }
-        }
+   stage('Login to Docker Hub') {
+    steps {
+        sh "echo ${env.DOCKER_HUB_CREDENTIALS_PSW} | docker login -u ${env.DOCKER_HUB_CREDENTIALS_USR} --password-stdin"
+    }
+}
+
         stage("push image"){
             steps{
             sh " docker push $DOCKERHUB_USER/nodejs-docker-app:$IMAGE_TAG "
