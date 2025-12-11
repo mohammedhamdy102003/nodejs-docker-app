@@ -28,7 +28,10 @@ pipeline{
             }
         }
         stage("push image"){
+            steps{
             sh " docker push $DOCKERHUB_USER/nodejs-docker-app:$IMAGE_TAG "
         }
+
     }
+}
 }
